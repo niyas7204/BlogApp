@@ -1,9 +1,13 @@
+import 'package:cleanarchitecture/core/enums.dart';
 import 'package:cleanarchitecture/core/theme/app_pallet.dart';
+import 'package:cleanarchitecture/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuhtButton extends StatelessWidget {
   final bool isLogin;
-  const AuhtButton({super.key, required this.isLogin});
+  final VoidCallback onPressed;
+  const AuhtButton({super.key, required this.isLogin, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class AuhtButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           color: AppPallete.gradient2),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius:
@@ -29,9 +33,17 @@ class AuhtButton extends StatelessWidget {
             fixedSize: Size(size.width - 20, 60),
             shadowColor: Colors.transparent,
             backgroundColor: Colors.transparent),
-        child: Text(
-          isLogin ? "Sign In" : "Sign Up",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, authstate) {
+            return authstate is SighUpState &&
+                    authstate.signUpState.status == StateStatus.loading
+                ? const CircularProgressIndicator()
+                : Text(
+                    isLogin ? "Sign In" : "Sign Up",
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
+                  );
+          },
         ),
       ),
     );
