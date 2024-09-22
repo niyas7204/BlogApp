@@ -41,7 +41,23 @@ class AuthRemoteImplimentation implements AuthRemoteDataSource {
       }
       return UserModel.fromjson(response.user!.toJson());
     } catch (e) {
-      log("signup------ error ${e}");
+      log("signup------ error $e");
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Session? get currentSession => supabaseClient.auth.currentSession;
+
+  @override
+  Future<UserModel?> getCurrentUserData() async {
+    try {
+      final userData = await supabaseClient
+          .from('profiles')
+          .select()
+          .eq("id", currentSession!.user.id);
+      return UserModel.fromjson(userData.first);
+    } catch (e) {
       throw ServerException(e.toString());
     }
   }

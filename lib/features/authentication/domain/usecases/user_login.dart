@@ -1,6 +1,6 @@
 import 'package:cleanarchitecture/core/errors/failure.dart';
 import 'package:cleanarchitecture/core/usecase/usecase.dart';
-import 'package:cleanarchitecture/features/authentication/domain/entities/user.dart';
+import 'package:cleanarchitecture/core/entities/user.dart';
 import 'package:cleanarchitecture/features/authentication/domain/repository/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 

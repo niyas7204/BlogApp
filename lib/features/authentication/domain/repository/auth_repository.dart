@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:cleanarchitecture/core/errors/failure.dart';
-import 'package:cleanarchitecture/core/state_handler.dart';
-import 'package:cleanarchitecture/features/authentication/domain/entities/user.dart';
+import 'package:cleanarchitecture/core/entities/user.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class AuthRepository {
@@ -13,4 +12,5 @@ abstract class AuthRepository {
     required String password,
     required String name,
   });
+  Future<Either<Failure, User>> currentUser();
 }

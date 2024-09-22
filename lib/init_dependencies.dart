@@ -1,8 +1,10 @@
+import 'package:cleanarchitecture/core/cubit/cubit/app_user_cubit.dart';
 import 'package:cleanarchitecture/core/secrets/supabase_secrets.dart';
 import 'package:cleanarchitecture/features/authentication/data/data_sources/auth_remote_data_source.dart';
 import 'package:cleanarchitecture/features/authentication/data/data_sources/auth_remote_implimentation.dart';
 import 'package:cleanarchitecture/features/authentication/data/repositories/auth_repository_implimentation.dart';
 import 'package:cleanarchitecture/features/authentication/domain/repository/auth_repository.dart';
+import 'package:cleanarchitecture/features/authentication/domain/usecases/current_user.dart';
 import 'package:cleanarchitecture/features/authentication/domain/usecases/user_login.dart';
 import 'package:cleanarchitecture/features/authentication/domain/usecases/user_sign_up.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/bloc/auth_bloc.dart';
@@ -17,6 +19,9 @@ Future<void> initDependencies() async {
       url: SupabaseSecrets.supabaserUrl, anonKey: SupabaseSecrets.supabseKey);
   serviceLocater.registerLazySingleton(
     () => supabase.client,
+  );
+  serviceLocater.registerLazySingleton(
+    () => AppUserCubit(),
   );
 }
 
@@ -33,7 +38,14 @@ _initAuth() {
   serviceLocater.registerFactory(
     () => UserLogin(authRepository: serviceLocater()),
   );
+  serviceLocater.registerFactory(
+    () => CurrentUser(authRepository: serviceLocater()),
+  );
   serviceLocater.registerLazySingleton(
-    () => AuthBloc(userSignUp: serviceLocater(), userLogin: serviceLocater()),
+    () => AuthBloc(
+        appUserCubit: serviceLocater(),
+        userSignUp: serviceLocater(),
+        userLogin: serviceLocater(),
+        currentUser: serviceLocater()),
   );
 }

@@ -35,8 +35,7 @@ class AuhtButton extends StatelessWidget {
             backgroundColor: Colors.transparent),
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authstate) {
-            return authstate is SighUpState &&
-                    authstate.signUpState.status == StateStatus.loading
+            return authstate is AuthLoading
                 ? const CircularProgressIndicator()
                 : Text(
                     isLogin ? "Sign In" : "Sign Up",

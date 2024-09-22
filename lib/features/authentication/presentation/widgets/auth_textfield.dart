@@ -38,7 +38,7 @@ class AuthField extends StatelessWidget {
             borderSide: const BorderSide(color: AppPallete.gradient2, width: 3),
           ),
           errorStyle:
-              TextStyle(color: const Color.fromARGB(255, 234, 122, 114)),
+              const TextStyle(color: Color.fromARGB(255, 234, 122, 114)),
           hintText: hintText),
       obscureText: isObscure,
       validator: (value) {
@@ -48,6 +48,7 @@ class AuthField extends StatelessWidget {
           }
           return null;
         }
+        return null;
       },
     );
   }

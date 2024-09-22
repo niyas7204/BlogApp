@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:cleanarchitecture/core/errors/exceptions.dart';
 import 'package:cleanarchitecture/core/errors/failure.dart';
 import 'package:cleanarchitecture/features/authentication/data/data_sources/auth_remote_data_source.dart';
-import 'package:cleanarchitecture/features/authentication/data/models/user_model.dart';
-import 'package:cleanarchitecture/features/authentication/domain/entities/user.dart';
+import 'package:cleanarchitecture/core/entities/user.dart';
 import 'package:cleanarchitecture/features/authentication/domain/repository/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
@@ -42,6 +39,22 @@ class AuthRepositoryImplimentation implements AuthRepository {
       return left(Failure(e.errorMessage));
     } on sb.AuthException catch (e) {
       return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> currentUser() async {
+    try {
+      final user = await remoteDataSource.getCurrentUserData();
+      if (user == null) {
+        return left(Failure("user not found"));
+      } else {
+        return right(user);
+      }
+    } on sb.Supabase catch (e) {
+      return left(Failure(e.toString()));
+    } on ServerException catch (e) {
+      return left(Failure(e.errorMessage));
     }
   }
 }

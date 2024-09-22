@@ -67,9 +67,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       SpaceBoxes.spaceH20,
                       AuhtButton(
                         onPressed: () {
-                          if (authstate is SighUpState &&
-                              authstate.signUpState.status !=
-                                  StateStatus.loading) {
+                          if (authstate is AuthSuccess) {
                             if (formKey.currentState!.validate()) {
                               log("field validated---");
                               context.read<AuthBloc>().add(AuthSignUp(

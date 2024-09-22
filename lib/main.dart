@@ -1,14 +1,11 @@
-import 'package:cleanarchitecture/core/secrets/supabase_secrets.dart';
-import 'package:cleanarchitecture/features/authentication/data/data_sources/auth_remote_implimentation.dart';
-import 'package:cleanarchitecture/features/authentication/data/repositories/auth_repository_implimentation.dart';
-import 'package:cleanarchitecture/features/authentication/domain/usecases/user_sign_up.dart';
+import 'package:cleanarchitecture/core/cubit/cubit/app_user_cubit.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/pages/login_page.dart';
+import 'package:cleanarchitecture/features/blog/presentation/pages/blog_page.dart';
 import 'package:cleanarchitecture/init_dependencies.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,16 +14,27 @@ void main() async {
   runApp(MultiRepositoryProvider(
     providers: [
       RepositoryProvider(create: (context) => serviceLocater<AuthBloc>()),
-      // RepositoryProvider(
-      //   create: (context) => SubjectRepository(),
-      // ),
+      RepositoryProvider(
+        create: (context) => serviceLocater<AppUserCubit>(),
+      ),
     ],
     child: const MyApp(),
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    context.read<AuthBloc>().add(AuthIsUserSignedin());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: const LoginPage(),
+      home: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          return state is AuthSuccess
+              ? BlocSelector<AppUserCubit, AppUserState, bool>(
+                  selector: (state) {
+                    return state is AppUserLogedin;
+                  },
+                  builder: (context, state) {
+                    return state ? const BlogPage() : const LoginPage();
+                  },
+                )
+              : Center(child: const CircularProgressIndicator());
+        },
+      ),
     );
   }
 }
