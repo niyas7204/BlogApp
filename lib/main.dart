@@ -1,6 +1,7 @@
 import 'package:cleanarchitecture/core/cubit/cubit/app_user_cubit.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/pages/login_page.dart';
+import 'package:cleanarchitecture/features/blog/presentation/bloc/bloc/blog_bloc.dart';
 import 'package:cleanarchitecture/features/blog/presentation/pages/blog_page.dart';
 import 'package:cleanarchitecture/init_dependencies.dart';
 
@@ -14,6 +15,7 @@ void main() async {
   runApp(MultiRepositoryProvider(
     providers: [
       RepositoryProvider(create: (context) => serviceLocater<AuthBloc>()),
+      RepositoryProvider(create: (context) => serviceLocater<BlogBloc>()),
       RepositoryProvider(
         create: (context) => serviceLocater<AppUserCubit>(),
       ),
