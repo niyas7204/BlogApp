@@ -43,7 +43,9 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
         listener: (context, state) {
           if (state is BlogFailure) {
             showSnackbar(context: context, message: state.errorMessage);
-          } else if (state is BlogSuccess) {
+          } else if (state is BloguploadSuccess) {
+            context.read<BlogBloc>().add(FetchAllBlogs());
+            log("blog update success");
             Navigator.pop(context);
           }
         },

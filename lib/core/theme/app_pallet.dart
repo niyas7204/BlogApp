@@ -10,4 +10,9 @@ class AppPallete {
   static const Color greyColor = Colors.grey;
   static const Color errorColor = Colors.redAccent;
   static const Color transparentColor = Colors.transparent;
+  static const List<Color> blogListColors = [
+    Color.fromRGBO(187, 63, 221, 1),
+    Color.fromRGBO(251, 109, 169, 1),
+    Color.fromRGBO(255, 159, 124, 1),
+  ];
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cleanarchitecture/core/errors/exceptions.dart';
+import 'package:cleanarchitecture/core/network/connection_checker.dart';
 import 'package:cleanarchitecture/features/blog/data/models/blog.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,7 +15,9 @@ abstract class BlogRemoteDataSources {
 class BlogRemoteDatasourceImp implements BlogRemoteDataSources {
   final SupabaseClient supabaseClient;
 
-  BlogRemoteDatasourceImp({required this.supabaseClient});
+  BlogRemoteDatasourceImp({
+    required this.supabaseClient,
+  });
 
   @override
   Future<BlogModel> uploadBlog({required BlogModel newBlog}) async {
@@ -51,14 +54,15 @@ class BlogRemoteDatasourceImp implements BlogRemoteDataSources {
   Future<List<BlogModel>> getAllBlog() async {
     try {
       final blogs =
-          await supabaseClient.from('blog').select("*,profile (name)");
+          await supabaseClient.from('blog').select("*,profiles (name)");
       return blogs
           .map(
             (blog) => BlogModel.fromJson(blog)
-                .copyWith(blogName: blog['profile']['name']),
+                .copyWith(blogName: blog['profiles']['name']),
           )
           .toList();
     } catch (e) {
+      log("get all blog erro $e");
       throw ServerException(e.toString());
     }
   }

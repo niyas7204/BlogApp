@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cleanarchitecture/core/theme/app_pallet.dart';
 import 'package:cleanarchitecture/features/blog/presentation/bloc/bloc/blog_bloc.dart';
 import 'package:cleanarchitecture/features/blog/presentation/pages/add_new_blog.dart';
 import 'package:flutter/material.dart';
@@ -40,13 +43,59 @@ class _BlogPageState extends State<BlogPage> {
           if (state is BlogLoading) {
             return const CircularProgressIndicator();
           } else if (state is BlogSuccess) {
-            return ListView.separated(
-                itemBuilder: (context, index) => const Text("--------"),
-                separatorBuilder: (context, index) => const SizedBox(
-                      height: 10,
-                    ),
-                itemCount: state.blog.length);
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.separated(
+                  itemBuilder: (context, index1) => Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          color: AppPallete.blogListColors[index1 % 3],
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppPallete.borderColor)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 40,
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.blog[index1].topics.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  width: 20,
+                                ),
+                                itemBuilder: (context, index) => Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: AppPallete.borderColor)),
+                                  child: Center(
+                                      child: Text(
+                                          state.blog[index1].topics[index])),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(state.blog[index1].tittle),
+                            Text(state.blog[index1].content),
+                          ],
+                        ),
+                      )),
+                  separatorBuilder: (context, index) => const SizedBox(
+                        height: 20,
+                      ),
+                  itemCount: state.blog.length),
+            );
           } else if (state is BlogFailure) {
+            log("get all blog error");
             return SizedBox(
               child: Text(state.errorMessage),
             );

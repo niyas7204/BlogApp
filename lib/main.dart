@@ -46,16 +46,14 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       home: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          return state is AuthSuccess
-              ? BlocSelector<AppUserCubit, AppUserState, bool>(
-                  selector: (state) {
-                    return state is AppUserLogedin;
-                  },
-                  builder: (context, state) {
-                    return state ? const BlogPage() : const LoginPage();
-                  },
-                )
-              : Center(child: const CircularProgressIndicator());
+          return BlocSelector<AppUserCubit, AppUserState, bool>(
+            selector: (state) {
+              return state is AppUserLogedin;
+            },
+            builder: (context, state) {
+              return state ? const BlogPage() : const LoginPage();
+            },
+          );
         },
       ),
     );

@@ -4,6 +4,7 @@ import 'package:cleanarchitecture/features/authentication/presentation/bloc/auth
 import 'package:cleanarchitecture/features/authentication/presentation/pages/signup_page.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/widgets/auth_button.dart';
 import 'package:cleanarchitecture/features/authentication/presentation/widgets/auth_textfield.dart';
+import 'package:cleanarchitecture/features/blog/presentation/pages/blog_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,72 +24,84 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Sign In.",
-                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, authstate) {
+        if (authstate is AuthSuccess) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const BlogPage(),
+          ));
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+              child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Sign In.",
+                      style:
+                          TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    ),
+                    SpaceBoxes.spaceH10,
+                    AuthField(controller: emailController, hintText: "Email"),
+                    SpaceBoxes.spaceH10,
+                    AuthField(
+                      controller: passwordController,
+                      hintText: "Password",
+                      isObscure: true,
+                    ),
+                    SpaceBoxes.spaceH10,
+                    SpaceBoxes.spaceH20,
+                    AuhtButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          context.read<AuthBloc>().add(AuthLogin(
+                              email: emailController.text,
+                              password: passwordController.text.trim()));
+                        }
+                      },
+                      isLogin: true,
+                    ),
+                    SpaceBoxes.spaceH20,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpPage(),
+                            ));
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                            text: "Don't have an account? ",
+                            style: Theme.of(context).textTheme.titleMedium,
+                            children: [
+                              TextSpan(
+                                  text: "Sign Up",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                          color: AppPallete.gradient2,
+                                          fontWeight: FontWeight.bold))
+                            ]),
+                      ),
+                    )
+                  ],
                 ),
-                SpaceBoxes.spaceH10,
-                AuthField(controller: emailController, hintText: "Email"),
-                SpaceBoxes.spaceH10,
-                AuthField(
-                  controller: passwordController,
-                  hintText: "Password",
-                  isObscure: true,
-                ),
-                SpaceBoxes.spaceH10,
-                SpaceBoxes.spaceH20,
-                AuhtButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      context.read<AuthBloc>().add(AuthLogin(
-                          email: emailController.text,
-                          password: passwordController.text.trim()));
-                    }
-                  },
-                  isLogin: true,
-                ),
-                SpaceBoxes.spaceH20,
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpPage(),
-                        ));
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                        text: "Don't have an account? ",
-                        style: Theme.of(context).textTheme.titleMedium,
-                        children: [
-                          TextSpan(
-                              text: "Sign Up",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                      color: AppPallete.gradient2,
-                                      fontWeight: FontWeight.bold))
-                        ]),
-                  ),
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      )),
+          )),
+        );
+      },
     );
   }
 }
